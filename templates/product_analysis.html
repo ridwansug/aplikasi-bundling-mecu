@@ -1,0 +1,256 @@
+{% extends 'layout.html' %}
+
+{% block title %}Analisis Produk Terjual vs Tidak Terjual - Sistem Rekomendasi Bundling{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Analisis Produk Terjual vs Tidak Terjual</h4>
+                    <div>
+                        <a href="{{ url_for('configure') }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-arrow-right me-1"></i>Lanjut ke Konfigurasi
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-sm btn-light">
+                            <i class="fas fa-upload me-1"></i>Upload File Baru
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card metric-card border-primary mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-primary">{{ analysis.total_products }}</h1>
+                                <p class="card-text">Total Produk</p>
+                                <small class="text-muted">Dalam Master Data</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card border-success mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-success">{{ analysis.sold_products_count }}</h1>
+                                <p class="card-text">Produk Terjual</p>
+                                <small class="text-muted">{{ "%.1f"|format(analysis.sold_percentage) }}%</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card border-danger mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-danger">{{ analysis.unsold_products_count }}</h1>
+                                <p class="card-text">Produk Tidak Terjual</p>
+                                <small class="text-muted">{{ "%.1f"|format(analysis.unsold_percentage) }}%</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card border-warning mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-warning">
+                                    {% if analysis.top_selling %}
+                                    {{ analysis.top_selling[0][1] }}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </h1>
+                                <p class="card-text">Penjualan Tertinggi</p>
+                                <small class="text-muted">
+                                    {% if analysis.top_selling %}
+                                    {{ analysis.product_mapping[analysis.top_selling[0][0]][:25] }}{% if analysis.product_mapping[analysis.top_selling[0][0]]|length > 25 %}...{% endif %}
+                                    {% else %}
+                                    N/A
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Info File yang Dianalisis -->
+                        <div class="alert alert-info mt-2 mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>File yang Dianalisis:</strong> 
+                            Data Pesanan: <strong>{{ transaction_filename }}</strong> | 
+                            Data Produk: <strong>{{ product_filename }}</strong><br>
+                            <i class="fas fa-columns me-2"></i>
+                            <strong>Mapping Kolom:</strong> 
+                            Transaksi: <strong>{{ analysis.transaction_product_col }}</strong> ↔ 
+                            Produk: <strong>{{ analysis.product_product_col }}</strong>
+                            {% if analysis.product_name_col != analysis.product_product_col %}
+                            | Nama: <strong>{{ analysis.product_name_col }}</strong>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Produk Terjual -->
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-check-circle me-2"></i>Produk Terjual 
+                    <span class="badge bg-light text-dark">{{ analysis.sold_products_count }}</span>
+                </h5>
+                <div class="mt-2">
+                    <input type="text" class="form-control form-control-sm" placeholder="Cari produk terjual...">
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if analysis.sold_products %}
+                <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                    <table class="table table-striped table-hover mb-0" id="soldProductsTable">
+                        <thead class="table-success sticky-top">
+                            <tr>
+                                <th style="width: 5%;">No</th>
+                                <th style="width: 15%;">Kode</th>
+                                <th style="width: 60%;">Nama Produk (SKU Penjual)</th>
+                                <th style="width: 20%;" class="text-center">Terjual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in analysis.sold_products %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><code class="bg-success text-white px-2 py-1 rounded">{{ product.code }}</code></td>
+                                <td>{{ product.name }}</td>
+                                <td class="text-center">
+                                    <span class="badge bg-success fs-6">{{ product.sales_count }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-muted">
+                    <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                    <p>Tidak ada produk yang terjual ditemukan</p>
+                    <small>Coba periksa kembali format data atau nama produk</small>
+                </div>
+                {% endif %}
+            </div>
+            {% if analysis.sold_products %}
+            <div class="card-footer">
+                <button class="btn btn-success btn-sm" onclick="exportTable('soldProductsTable', 'produk_terjual.csv')">
+                    <i class="fas fa-download me-1"></i>Export CSV
+                </button>
+                <a href="/debug_simple_product" target="_blank" class="btn btn-info btn-sm">
+                    <i class="fas fa-bug me-1"></i>Debug Info
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Produk Tidak Terjual -->
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-times-circle me-2"></i>Produk Tidak Terjual 
+                    <span class="badge bg-light text-dark">{{ analysis.unsold_products_count }}</span>
+                </h5>
+                <div class="mt-2">
+                    <input type="text" class="form-control form-control-sm" placeholder="Cari produk tidak terjual...">
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if analysis.unsold_products %}
+                <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                    <table class="table table-striped table-hover mb-0" id="unsoldProductsTable">
+                        <thead class="table-danger sticky-top">
+                            <tr>
+                                <th style="width: 8%;">No</th>
+                                <th style="width: 20%;">Kode</th>
+                                <th style="width: 72%;">Nama Produk (SKU Penjual)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in analysis.unsold_products %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><code class="bg-danger text-white px-2 py-1 rounded">{{ product.code }}</code></td>
+                                <td>{{ product.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-muted">
+                    <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+                    <p>Semua produk telah terjual!</p>
+                    <small>Excellent performance! 🎉</small>
+                </div>
+                {% endif %}
+            </div>
+            {% if analysis.unsold_products %}
+            <div class="card-footer">
+                <button class="btn btn-danger btn-sm" onclick="exportTable('unsoldProductsTable', 'produk_tidak_terjual.csv')">
+                    <i class="fas fa-download me-1"></i>Export CSV
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Top 10 Produk Terlaris -->
+{% if analysis.top_selling %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top 10 Produk Terlaris</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for sku, count in analysis.top_selling %}
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center p-3 border rounded">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-warning text-dark fs-5">#{{ loop.index }}</span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">{{ analysis.product_mapping[sku] }}</h6>
+                                <small class="text-muted">SKU: {{ sku }}</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-primary fs-5">{{ count }} x</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Navigation -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Kembali ke Upload
+            </a>
+            <a href="{{ url_for('configure') }}" class="btn btn-success">
+                <i class="fas fa-arrow-right me-1"></i> Lanjut ke Konfigurasi Parameter
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

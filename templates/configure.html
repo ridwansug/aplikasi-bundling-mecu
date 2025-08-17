@@ -1,0 +1,187 @@
+{% extends 'layout.html' %}
+
+{% block title %}Konfigurasi Analisis - Sistem Rekomendasi Bundling{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-cogs me-2"></i>Konfigurasi Analisis</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    File <strong>{{ filename }}</strong> berhasil diunggah. Silakan konfigurasikan parameter analisis di bawah ini.
+                </div>
+
+                <form action="{{ url_for('analyze') }}" method="post" class="mt-4">
+                    <!-- Date Range Filter Section -->
+                    <div class="card mb-4" style="border-left: 4px solid #2196F3;">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Filter Rentang Tanggal</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Hidden input untuk kolom tanggal yang sudah ditetapkan -->
+                            <input type="hidden" id="date_column" name="date_column" value="Created Time">
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-clock text-info me-2"></i>
+                                            <strong>Kolom Tanggal:</strong> 
+                                            <span class="ms-2 badge bg-info">Created Time</span>
+                                        </div>
+                                        <small class="text-muted">Kolom yang digunakan untuk filtering berdasarkan tanggal</small>
+                                    </div>
+                                     <div class="mb-3">
+                                        <button type="button" id="previewFilter" class="btn btn-info form-control">
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="start_date" class="form-label">Tanggal Mulai</label>
+                                        <select class="form-select" id="start_date" name="start_date">
+                                            <option value="">Pilih tanggal mulai...</option>
+                                        </select>
+                                        <div class="form-text">Tanggal awal untuk filter data</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="end_date" class="form-label">Tanggal Akhir</label>
+                                        <select class="form-select" id="end_date" name="end_date">
+                                            <option value="">Pilih tanggal akhir...</option>
+                                        </select>
+                                        <div class="form-text">Tanggal akhir untuk filter data</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                </div>
+                            </div>
+                            <div id="dateFilterInfo" class="alert alert-success d-none">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <span id="filterInfoText"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden inputs untuk kolom yang sudah ditetapkan -->
+                    <input type="hidden" name="order_column" value="Order ID">
+                    <input type="hidden" name="product_column" value="Seller SKU">
+                    <input type="hidden" name="sku_id_column" value="SKU ID">
+                    
+                    <!-- Informasi kolom yang digunakan -->
+                    <div class="card mb-4" style="border-left: 4px solid #28a745;">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-columns me-2"></i>Kolom Data yang Digunakan</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-hashtag text-primary me-2"></i>
+                                        <strong>Order ID:</strong> 
+                                        <span class="ms-2 badge bg-primary">Order ID</span>
+                                    </div>
+                                    <small class="text-muted">Kolom untuk identifikasi transaksi unik</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-box text-success me-2"></i>
+                                        <strong>Produk:</strong> 
+                                        <span class="ms-2 badge bg-success">Seller SKU</span>
+                                    </div>
+                                    <small class="text-muted">Kolom untuk nama/kode produk</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-barcode text-info me-2"></i>
+                                        <strong>Created Time:</strong> 
+                                        <span class="ms-2 badge bg-info">Created Time</span>
+                                    </div>
+                                    <small class="text-muted">Kolom untuk filtering berdasarkan tanggal</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parameter Section dengan Penjelasan yang Diperbaiki -->
+                    <div class="card mb-4" style="border-left: 4px solid #ff9800;">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Parameter Analisis ECLAT</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="min_support" class="form-label">Minimum Support</label>
+                                        <input type="number" class="form-control" id="min_support" name="min_support" 
+                                               value="{{ min_support|default(0.01) }}" min="0.001" max="1" step="0.001" required>
+                                      
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="min_confidence" class="form-label">Minimum Confidence</label>
+                                        <input type="number" class="form-control" id="min_confidence" name="min_confidence" 
+                                               value="{{ min_confidence|default(0.2) }}" min="0.1" max="1" step="0.01" required>
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="min_lift" class="form-label">Minimum Lift</label>
+                                        <input type="number" class="form-control" id="min_lift" name="min_lift" 
+                                               value="{{ min_lift|default(1) }}" min="1" step="0.1" required>
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                      
+                        </div>
+                    </div>
+
+                  
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <div>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-arrow-left me-1"></i> Kembali ke Upload
+                            </a>
+                            {% if has_product_analysis %}
+                            <a href="{{ url_for('product_analysis') }}" class="btn btn-outline-info">
+                                <i class="fas fa-chart-bar me-1"></i> Lihat Analisis Produk
+                            </a>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-play me-1"></i> Jalankan Analisis
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+       
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Memuat data tanggal...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

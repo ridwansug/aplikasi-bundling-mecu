@@ -1,0 +1,248 @@
+{% extends 'layout.html' %}
+
+{% block title %}Hasil Analisis Enhanced - Sistem Rekomendasi Bundling dengan {{ algorithm }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Ringkasan Analisis </h4>
+                    <div>
+                        <a href="{{ url_for('configure') }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-sliders-h me-1"></i>Atur Parameter
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-upload me-1"></i>Upload File Baru
+                        </a>
+                        {% if 'product_filepath' in session %}
+                        <a href="{{ url_for('product_analysis') }}" class="btn btn-sm btn-light">
+                            <i class="fas fa-chart-bar me-1"></i>Analisis Produk
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card metric-card border-primary mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-primary">{{ display_total_transactions|default(total_transactions) }}</h1>
+                                <p class="card-text">Total Transaksi</p>
+                                {% if sku_id_column %}
+                                <small class="text-muted">Transaksi Unik</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card metric-card border-danger mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-danger">{{ unique_product_count }}</h1>
+                                <p class="card-text">Produk Unik</p>
+                                <small class="text-muted">Seller SKU</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card metric-card border-info mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-info">{% if rules %}{{ rules|length }}{% else %}0{% endif %}</h1>
+                                <p class="card-text">Hasil Akhir Rules</p>
+                                <small class="text-muted">2 Terjual + 1 Tidak Terjual</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- <div class="col-md-4">
+                        <div class="card metric-card border-danger mb-3 h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 fw-bold text-danger">
+                                    {{ "%.2f"|format(process_time) }}
+                                </h1>
+                                <p class="card-text">Waktu Proses (detik)</p>
+                                <small class="text-muted">Algoritma Eclat</small>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top 10 Produk Terlaris</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for product, count in top_products.items() %}
+                    <li class="list-group-item top-product-item d-flex justify-content-between align-items-center">
+                        <span>{{ product }}</span>
+                        <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Rekomendasi Bundling</h5>
+            </div>
+            <div class="card-body">
+                {% if rules %}
+                <p>Berdasarkan analisis enhanced algorithm dengan kombinasi <strong>2 produk terjual + 1 produk tidak terjual</strong>:</p>
+                
+                <div class="list-group">
+                    {% for rule in rules[:5] %}
+                    <div class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between mb-2">
+                            <h6 class="mb-1">Enhanced Bundle #{{ loop.index }}</h6>
+                            <div>
+                                {% if rule.get('Historical_Occurrence_Count') %}
+                                <small class="text-muted me-2">Historis: {{ rule.get('Historical_Occurrence_Count') }}x</small>
+                                {% endif %}
+                                <small class="text-muted">Confidence: {{ "%.1f"|format(rule.get('Confidence', 0) * 100) }}%</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <p class="mb-1">
+                                <span class="badge bg-success me-1">Terjual</span>
+                                <span class="highlight-antecedent">{{ rule.get('Antecedent', rule.get('antecedents', '')) }}</span>
+                                <i class="fas fa-arrow-right mx-2"></i>
+                                <span class="highlight-consequent">{{ rule.get('Consequent', rule.get('consequents', '')) }}</span>
+                            </p>
+                            {% if rule.get('Added_Unsold_Product') %}
+                            <p class="mb-1">
+                                <span class="badge bg-warning text-dark me-1">+Tidak Terjual</span>
+                                <span class="badge bg-danger">{{ rule.get('Added_Unsold_Product') }}</span>
+                            </p>
+                            {% endif %}
+                        </div>
+                        
+                        <small class="text-muted">
+                            Original Support: {{ "%.3f"|format(rule.get('Itemset_Support', rule.get('support', 0))) }} 
+                            ({{ "%.1f"|format((rule.get('Itemset_Support', rule.get('support', 0))) * 100) }}%) | 
+                            Lift: {{ "%.2f"|format(rule.get('Lift', rule.get('lift', 0))) }}
+                            {% if rule.get('Enhanced_Rule') %}
+                            <br><strong>Enhanced Rule:</strong> {{ rule.get('Enhanced_Rule') }}
+                            {% endif %}
+                        </small>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="#fullRulesTable" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-list me-1"></i>Lihat Semua Enhanced Rules
+                    </a>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Tidak ada enhanced rules yang ditemukan</strong>
+                    {% if not has_unsold_products %}
+                    <br>Tidak ada data produk tidak terjual. Upload file data produk untuk mendapatkan enhanced rules.
+                    {% elif not has_historical_validation %}
+                    <br>Tidak ada data historis untuk validasi. Upload file data pesanan maret untuk validasi enhanced rules.
+                    {% else %}
+                    <br>Tidak ada kombinasi 3 produk yang pernah muncul bersama dalam data historis.
+                    {% endif %}
+                    <p class="mt-2 mb-0">Coba sesuaikan parameter minimum support, confidence, atau lift.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0" id="fullRulesTable"><i class="fas fa-table me-2"></i>Tabel Hasil Bundling</h5>
+                    {% if rules %}
+                    <div>
+                       
+                        <a href="{{ url_for('export_rules') }}" class="btn btn-sm btn-light">
+                            <i class="fas fa-download me-1"></i>Download Hasil (CSV) 
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                {% if rules %}
+             
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="rulesTable">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Rules</th>
+                                <th>+1 Produk Tidak Terjual</th>
+                                <th>Support</th>
+                                <th>Confidence</th>
+                                <th>Lift</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rule in rules %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>
+                                    <div>
+                                        <span class="highlight-antecedent">{{ rule.get('Antecedent', rule.get('antecedents', '')) }}</span>
+                                        <i class="fas fa-arrow-right mx-1"></i>
+                                        <span class="highlight-consequent">{{ rule.get('Consequent', rule.get('consequents', '')) }}</span>
+                                    </div>
+                                    <small class="text-muted">{{ rule.get('Original_Rule', rule.get('original_rule', '')) }}</small>
+                                </td>
+                                <td>
+                                    {% if rule.get('Added_Unsold_Product') %}
+                                    <span class="badge bg-danger fs-6">{{ rule.get('Added_Unsold_Product') }}</span>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                              
+                                <td>{{ "%.4f"|format(rule.get('Itemset_Support', rule.get('support', 0))) }}</td>
+                                <td>{{ "%.4f"|format(rule.get('Confidence', rule.get('confidence', 0))) }}</td>
+                                <td>{{ "%.2f"|format(rule.get('Lift', rule.get('lift', 0))) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Tidak ada enhanced rules yang memenuhi kriteria.
+                    {% if not has_unsold_products %}
+                    <br><strong>Catatan:</strong> Tidak ada data produk tidak terjual. Silakan upload file data produk untuk mendapatkan enhanced rules.
+                    {% elif not has_historical_validation %}
+                    <br><strong>Catatan:</strong> Tidak ada data historis untuk validasi. Silakan upload file data pesanan maret untuk validasi enhanced rules.
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+{% endblock %}

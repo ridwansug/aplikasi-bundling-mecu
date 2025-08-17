@@ -1,0 +1,564 @@
+/* =================================================================
+   MAIN CSS FILE - Sistem Rekomendasi Bundling
+   Menggabungkan semua styling untuk semua halaman
+   ================================================================= */
+
+/* =================================================================
+   GLOBAL STYLES (dari style.css yang sudah ada)
+   ================================================================= */
+
+/* Metric Cards Animation */
+.metric-card {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Highlight untuk Rules */
+.highlight-antecedent {
+    background: linear-gradient(45deg, #fff3cd, #ffeaa7);
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    border: 1px solid #ffeaa7;
+}
+
+.highlight-consequent {
+    background: linear-gradient(45deg, #d1ecf1, #74b9ff);
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    border: 1px solid #74b9ff;
+    color: #2d3436;
+}
+
+/* Top Products Animation */
+.top-product-item {
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.top-product-item:hover {
+    background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+    border-left-color: #007bff;
+    transform: translateX(5px);
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Progress Steps */
+.progress-step {
+    position: relative;
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-radius: 20px;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active {
+    background: #007bff;
+    color: white;
+}
+
+.progress-step.completed {
+    background: #28a745;
+    color: white;
+}
+
+/* Tables */
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,.075);
+}
+
+/* Cards dengan border kiri colorful */
+.card-border-left {
+    border-left: 4px solid;
+}
+
+.card-border-left.border-primary {
+    border-left-color: #007bff;
+}
+
+.card-border-left.border-success {
+    border-left-color: #28a745;
+}
+
+.card-border-left.border-warning {
+    border-left-color: #ffc107;
+}
+
+.card-border-left.border-danger {
+    border-left-color: #dc3545;
+}
+
+.card-border-left.border-info {
+    border-left-color: #17a2b8;
+}
+
+/* =================================================================
+   INDEX PAGE STYLES
+   ================================================================= */
+
+.bg-light-success {
+    background-color: #d4edda !important;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.form-control.is-valid {
+    border-color: #28a745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.4.4 3.5-3.5-.4-.4L2.7 6.29.9 4.51.5 4.9z'/%3e%3c/svg%3e");
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3e%3cpath fill='%23dc3545' d='M6 0C2.7 0 0 2.7 0 6s2.7 6 6 6 6-2.7 6-6S9.3 0 6 0zM8.5 9.5L6 7 3.5 9.5 2.5 8.5 5 6 2.5 3.5 3.5 2.5 6 5 8.5 2.5 9.5 3.5 7 6l2.5 2.5-1 1z'/%3e%3c/svg%3e");
+}
+
+/* File input styling */
+.form-control[type="file"] {
+    transition: all 0.2s ease;
+}
+
+.form-control[type="file"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Card border animations */
+.card[style*="border-left"] {
+    transition: border-left 0.3s ease;
+}
+
+/* Button hover effects */
+.btn-primary {
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Form text styling */
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Upload feedback styling */
+.upload-feedback {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Card header styling */
+.card-header h5 {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+.card-header h5 i {
+    margin-right: 0.5rem;
+}
+
+/* =================================================================
+   CONFIGURE PAGE STYLES
+   ================================================================= */
+
+/* Parameter update styling */
+#support_percentage,
+#confidence_percentage,
+#lift_value {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Loading modal styling */
+.modal-content {
+    border-radius: 10px;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Date filter info styling */
+#dateFilterInfo {
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+/* Form validation styling */
+.form-control:invalid {
+    border-color: #dc3545;
+}
+
+.form-control:valid {
+    border-color: #28a745;
+}
+
+/* Badge styling untuk kolom info */
+.badge {
+    font-size: 0.875em;
+}
+
+/* Preview button styling */
+#previewFilter {
+    transition: all 0.2s ease;
+}
+
+#previewFilter:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+/* =================================================================
+   PRODUCT ANALYSIS PAGE STYLES
+   ================================================================= */
+
+/* Table styling */
+.table-responsive {
+    border-radius: 0.375rem;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+}
+
+/* Search input styling */
+.form-control-sm {
+    border-radius: 0.375rem;
+}
+
+.form-control-sm:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Code badge styling */
+code.bg-success,
+code.bg-danger {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Export button styling */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Card body padding adjustments */
+.card-body.p-0 {
+    padding: 0 !important;
+}
+
+/* Badge sizing */
+.badge.fs-6 {
+    font-size: 1rem !important;
+}
+
+/* Alert styling for empty states */
+.text-center.text-muted {
+    padding: 2rem;
+}
+
+.text-center.text-muted i {
+    opacity: 0.5;
+}
+
+/* Navigation buttons */
+.btn-outline-secondary:hover {
+    transform: translateY(-1px);
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+}
+
+/* Card header badge */
+.card-header .badge {
+    font-size: 0.875rem;
+    padding: 0.35em 0.65em;
+}
+
+/* =================================================================
+   RESULTS PAGE STYLES
+   ================================================================= */
+
+/* List group item styling */
+.list-group-item-action {
+    transition: all 0.2s ease;
+}
+
+.list-group-item-action:hover {
+    background-color: #f8f9fa;
+    transform: translateX(2px);
+}
+
+/* Badge styling */
+.badge.bg-success,
+.badge.bg-warning,
+.badge.bg-danger {
+    font-size: 0.875rem;
+    padding: 0.35em 0.65em;
+}
+
+/* DataTable custom styling */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-outline-primary:hover {
+    transform: translateY(-1px);
+}
+
+/* Enhanced rule styling */
+.enhanced-rule {
+    border-left: 4px solid #28a745;
+    background-color: #f8fff9;
+}
+
+/* Arrow styling */
+.fas.fa-arrow-right {
+    color: #6c757d;
+    margin: 0 0.5rem;
+}
+
+/* Enhanced bundle styling */
+.enhanced-bundle {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* =================================================================
+   SHARED UTILITY STYLES
+   ================================================================= */
+
+/* Upload area styling */
+.upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.upload-area:hover {
+    border-color: #007bff;
+    background: #e7f3ff;
+}
+
+.upload-area.dragover {
+    border-color: #28a745;
+    background: #d4edda;
+}
+
+/* Badge styling */
+.badge-custom {
+    font-size: 0.75em;
+    padding: 0.35em 0.6em;
+    border-radius: 10px;
+}
+
+/* Button enhancements */
+.btn-gradient-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+    color: white;
+}
+
+.btn-gradient-success {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient-success:hover {
+    background: linear-gradient(45deg, #1e7e34, #155724);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+    color: white;
+}
+
+/* Alert enhancements */
+.alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Animation untuk cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Status indicators */
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-success {
+    background-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+}
+
+.status-warning {
+    background-color: #ffc107;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3);
+}
+
+.status-danger {
+    background-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+}
+
+/* Loading states */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading:after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    animation: spin 1s linear infinite;
+}
+
+/* Export button styling */
+.export-btn {
+    background: linear-gradient(45deg, #17a2b8, #138496);
+    border: none;
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+    background: linear-gradient(45deg, #138496, #117a8b);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+    color: white;
+}
+
+
+@media (max-width: 768px) {
+    .metric-card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-group-responsive .btn {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .card:hover {
+        transform: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .top-product-item:hover {
+        transform: none;
+    }
+}

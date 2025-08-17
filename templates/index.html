@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+
+{% block title %}Sistem Rekomendasi Produk Bundling dengan {{ algorithm }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-upload me-2"></i>Unggah Data untuk Analisis</h4>
+            </div>
+            <div class="card-body">
+
+                <form action="{{ url_for('upload_triple_files') }}" method="post" enctype="multipart/form-data" class="mt-4">
+                    <div class="card mb-4" style="border-left: 4px solid #dc3545;">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-shopping-cart text-danger me-2"></i>Data Penjualan 1 Bulan Terakhir </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="main_analysis_file" class="form-label">File Data Pesanan/Transaksi (Data Utama)</label>
+                                <input type="file" class="form-control" id="main_analysis_file" name="main_analysis_file" 
+                                       required accept=".csv, .xlsx, .xls">
+                                <div class="form-text">
+                                    <strong>Format yang didukung:</strong> CSV, Excel (.xlsx, .xls)<br>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+
+                    <div class="card mb-4" style="border-left: 4px solid #28a745;">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-box text-success me-2"></i>Data Master Produk </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="product_master_file" class="form-label">File Data Produk (Master Data Produk)</label>
+                                <input type="file" class="form-control" id="product_master_file" name="product_master_file" 
+                                       accept=".csv, .xlsx, .xls">
+                                <div class="form-text">
+                                    <strong>Format yang didukung:</strong> CSV, Excel (.xlsx, .xls)<br>
+                                
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+
+                    <div class="card mb-4" style="border-left: 4px solid #ffc107;">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-history text-warning me-2"></i>Data Penjualan 2 Bulan Terakhir </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="historical_validation_file" class="form-label">File Data Pesanan Historis</label>
+                                <input type="file" class="form-control" id="historical_validation_file" name="historical_validation_file" 
+                                       accept=".csv, .xlsx, .xls">
+                                <div class="form-text">
+                                     <strong>Format yang didukung:</strong> CSV, Excel (.xlsx, .xls)<br>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload me-2"></i>Unggah File & Mulai Enhanced Analysis
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+       
+    </div>
+</div>
+{% endblock %}
