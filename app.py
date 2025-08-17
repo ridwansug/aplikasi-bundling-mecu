@@ -22,6 +22,10 @@ import time
 import math
 from datetime import datetime
 import re
+import sys
+
+if sys.version_info >= (3, 12):
+    import setuptools
 
 app = Flask(__name__)
 app.secret_key = "bundling_recommendation_key"
